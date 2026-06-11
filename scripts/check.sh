@@ -7,6 +7,7 @@ cd "$repo_dir"
 required_paths=(
   ".gitignore"
   "AGENTS.md"
+  "README.md"
   "global/AGENTS.md"
   "config/config.example.toml"
   "docs/ARCHITECTURE.md"
@@ -104,5 +105,10 @@ if [ -f "$validator" ]; then
     fi
   done
 fi
+
+bash scripts/install.sh --dry-run >/dev/null
+bash scripts/install.sh --skills-only --dry-run >/dev/null
+bash scripts/install.sh --skills-only --skill ralph-loop --dry-run >/dev/null
+bash scripts/install.sh --no-agents --dry-run >/dev/null
 
 printf 'Harness checks passed\n'

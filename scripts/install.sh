@@ -5,11 +5,86 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 skill_home="$HOME/.agents/skills"
 stamp="$(date +%Y%m%d%H%M%S)"
+install_skills=true
+install_agents=true
+install_config=true
+dry_run=false
+selected_skills=()
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/install.sh [options]
+
+Options:
+  --skills-only       Install skills only; skip AGENTS.md and config.
+  --skill NAME        Install only one skill. Can be repeated.
+  --no-skills         Skip skill installation.
+  --no-agents         Skip linking global/AGENTS.md.
+  --no-config         Skip config.example.toml bootstrap.
+  --dry-run           Print actions without changing files.
+  -h, --help          Show this help.
+EOF
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --skills-only)
+      install_skills=true
+      install_agents=false
+      install_config=false
+      ;;
+    --skill)
+      if [ "$#" -lt 2 ]; then
+        printf 'Missing value for --skill\n' >&2
+        exit 2
+      fi
+      selected_skills+=("$2")
+      shift
+      ;;
+    --no-skills)
+      install_skills=false
+      ;;
+    --no-agents)
+      install_agents=false
+      ;;
+    --no-config)
+      install_config=false
+      ;;
+    --dry-run)
+      dry_run=true
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      printf 'Unknown option: %s\n\n' "$1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+if [ "$install_skills" = false ] && [ "${#selected_skills[@]}" -gt 0 ]; then
+  printf 'Cannot use --skill when --no-skills is set\n' >&2
+  exit 2
+fi
+
+run_cmd() {
+  if [ "$dry_run" = true ]; then
+    printf 'DRY RUN:'
+    printf ' %q' "$@"
+    printf '\n'
+  else
+    "$@"
+  fi
+}
 
 backup_existing() {
   local target="$1"
   if [ -e "$target" ] || [ -L "$target" ]; then
-    mv "$target" "${target}.bak.${stamp}"
+    run_cmd mv "$target" "${target}.bak.${stamp}"
     printf 'Backed up %s\n' "$target"
   fi
 }
@@ -24,24 +99,51 @@ link_path() {
   fi
 
   backup_existing "$target"
-  ln -s "$source" "$target"
+  run_cmd ln -s "$source" "$target"
   printf 'Linked %s -> %s\n' "$target" "$source"
 }
 
-mkdir -p "$codex_home" "$skill_home"
+if [ "$install_agents" = true ] || [ "$install_config" = true ]; then
+  run_cmd mkdir -p "$codex_home"
+fi
 
-for skill_dir in "$repo_dir"/skills/*; do
-  [ -d "$skill_dir" ] || continue
-  [ -f "$skill_dir/SKILL.md" ] || continue
-  skill_name="$(basename "$skill_dir")"
-  link_path "$skill_dir" "$skill_home/$skill_name"
-done
+if [ "$install_skills" = true ]; then
+  run_cmd mkdir -p "$skill_home"
 
-link_path "$repo_dir/global/AGENTS.md" "$codex_home/AGENTS.md"
-
-if [ ! -e "$codex_home/config.toml" ] && [ ! -L "$codex_home/config.toml" ]; then
-  cp "$repo_dir/config/config.example.toml" "$codex_home/config.toml"
-  printf 'Created %s from config/config.example.toml\n' "$codex_home/config.toml"
+  if [ "${#selected_skills[@]}" -gt 0 ]; then
+    for skill_name in "${selected_skills[@]}"; do
+      skill_dir="$repo_dir/skills/$skill_name"
+      if [ ! -f "$skill_dir/SKILL.md" ]; then
+        printf 'Skill not found or missing SKILL.md: %s\n' "$skill_name" >&2
+        exit 1
+      fi
+      link_path "$skill_dir" "$skill_home/$skill_name"
+    done
+  else
+    for skill_dir in "$repo_dir"/skills/*; do
+      [ -d "$skill_dir" ] || continue
+      [ -f "$skill_dir/SKILL.md" ] || continue
+      skill_name="$(basename "$skill_dir")"
+      link_path "$skill_dir" "$skill_home/$skill_name"
+    done
+  fi
 else
-  printf 'Left existing %s unchanged\n' "$codex_home/config.toml"
+  printf 'Skipped skills\n'
+fi
+
+if [ "$install_agents" = true ]; then
+  link_path "$repo_dir/global/AGENTS.md" "$codex_home/AGENTS.md"
+else
+  printf 'Skipped AGENTS.md\n'
+fi
+
+if [ "$install_config" = true ]; then
+  if [ ! -e "$codex_home/config.toml" ] && [ ! -L "$codex_home/config.toml" ]; then
+    run_cmd cp "$repo_dir/config/config.example.toml" "$codex_home/config.toml"
+    printf 'Created %s from config/config.example.toml\n' "$codex_home/config.toml"
+  else
+    printf 'Left existing %s unchanged\n' "$codex_home/config.toml"
+  fi
+else
+  printf 'Skipped config\n'
 fi
