@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plan Deeply"
+  short_description: "Decision-complete adaptive planning"
+  default_prompt: "Use $plan-deeply to draft a decision-complete implementation plan."
+
+policy:
+  allow_implicit_invocation: true

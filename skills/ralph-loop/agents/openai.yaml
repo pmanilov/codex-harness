@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ralph Loop"
+  short_description: "Bounded validation-driven task loops"
+  default_prompt: "Use $ralph-loop to run a bounded CRDAL-lite loop on this task with local-only safety gates."

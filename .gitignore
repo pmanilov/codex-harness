@@ -1,0 +1,34 @@
+# Secrets and machine-local Codex state
+auth.json
+history.jsonl
+installation_id
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.db-shm
+*.db-wal
+
+# Runtime/cache directories
+cache/
+log/
+logs/
+sessions/
+shell_snapshots/
+tmp/
+.tmp/
+generated_images/
+state/
+memories/
+
+# Local overrides
+.env
+.env.*
+*.local
+config/config.toml
+config/*.local.toml
+
+# Build/editor noise
+.DS_Store
+__pycache__/
+*.pyc
