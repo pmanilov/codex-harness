@@ -5,6 +5,8 @@
 - Read `docs/ARCHITECTURE.md` before changing repository layout or install behavior.
 - Read `docs/TESTING.md` before validating skills, scripts, or sync changes.
 - Read `docs/QUALITY.md` before adding portable Codex customizations.
+- Read `docs/EVALS.md` before changing critical harness workflows.
+- Read `docs/PLANS.md` before planning complex harness changes.
 - Read `docs/INSTALL.md` when changing two-device setup, symlinks, or bootstrap steps.
 
 ## Repository Rules

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Repo Bootstrap"
+  short_description: "Create repo agent docs from facts"
+  default_prompt: "Use $repo-bootstrap to create or update concise Codex harness docs for this repository."
+
+policy:
+  allow_implicit_invocation: true

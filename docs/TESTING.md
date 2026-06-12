@@ -17,7 +17,15 @@ After install changes, dry-run review the installer manually before using it on 
 ```bash
 sed -n '1,220p' scripts/install.sh
 bash scripts/install.sh --dry-run
+bash scripts/install.sh --skills-only --skill repo-bootstrap --dry-run
 bash scripts/install.sh --skills-only --skill ralph-loop --dry-run
+bash scripts/install.sh --no-skills --no-agents --no-config --dry-run
+```
+
+Test command policy rules with:
+
+```bash
+codex execpolicy check --pretty --rules rules/harness.rules -- git add .
 ```
 
 Do not run install scripts in production-like or shared accounts without checking target paths first.

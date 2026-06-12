@@ -3,11 +3,14 @@ set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 codex_home="${CODEX_HOME:-$HOME/.codex}"
-skill_home="$HOME/.agents/skills"
+codex_skill_home="$codex_home/skills"
+agents_skill_home="$HOME/.agents/skills"
+skill_homes=("$codex_skill_home" "$agents_skill_home")
 stamp="$(date +%Y%m%d%H%M%S)"
 install_skills=true
 install_agents=true
 install_config=true
+install_rules=true
 dry_run=false
 selected_skills=()
 
@@ -21,6 +24,7 @@ Options:
   --no-skills         Skip skill installation.
   --no-agents         Skip linking global/AGENTS.md.
   --no-config         Skip config.example.toml bootstrap.
+  --no-rules          Skip linking portable Codex rules.
   --dry-run           Print actions without changing files.
   -h, --help          Show this help.
 EOF
@@ -32,6 +36,7 @@ while [ "$#" -gt 0 ]; do
       install_skills=true
       install_agents=false
       install_config=false
+      install_rules=false
       ;;
     --skill)
       if [ "$#" -lt 2 ]; then
@@ -49,6 +54,9 @@ while [ "$#" -gt 0 ]; do
       ;;
     --no-config)
       install_config=false
+      ;;
+    --no-rules)
+      install_rules=false
       ;;
     --dry-run)
       dry_run=true
@@ -103,28 +111,37 @@ link_path() {
   printf 'Linked %s -> %s\n' "$target" "$source"
 }
 
-if [ "$install_agents" = true ] || [ "$install_config" = true ]; then
+if [ "$install_agents" = true ] || [ "$install_config" = true ] || [ "$install_rules" = true ]; then
   run_cmd mkdir -p "$codex_home"
 fi
 
 if [ "$install_skills" = true ]; then
-  run_cmd mkdir -p "$skill_home"
+  for skill_home in "${skill_homes[@]}"; do
+    run_cmd mkdir -p "$skill_home"
+  done
+
+  install_skill() {
+    local skill_name="$1"
+    local skill_dir="$repo_dir/skills/$skill_name"
+    if [ ! -f "$skill_dir/SKILL.md" ]; then
+      printf 'Skill not found or missing SKILL.md: %s\n' "$skill_name" >&2
+      exit 1
+    fi
+    for skill_home in "${skill_homes[@]}"; do
+      link_path "$skill_dir" "$skill_home/$skill_name"
+    done
+  }
 
   if [ "${#selected_skills[@]}" -gt 0 ]; then
     for skill_name in "${selected_skills[@]}"; do
-      skill_dir="$repo_dir/skills/$skill_name"
-      if [ ! -f "$skill_dir/SKILL.md" ]; then
-        printf 'Skill not found or missing SKILL.md: %s\n' "$skill_name" >&2
-        exit 1
-      fi
-      link_path "$skill_dir" "$skill_home/$skill_name"
+      install_skill "$skill_name"
     done
   else
     for skill_dir in "$repo_dir"/skills/*; do
       [ -d "$skill_dir" ] || continue
       [ -f "$skill_dir/SKILL.md" ] || continue
       skill_name="$(basename "$skill_dir")"
-      link_path "$skill_dir" "$skill_home/$skill_name"
+      install_skill "$skill_name"
     done
   fi
 else
@@ -146,4 +163,15 @@ if [ "$install_config" = true ]; then
   fi
 else
   printf 'Skipped config\n'
+fi
+
+if [ "$install_rules" = true ]; then
+  run_cmd mkdir -p "$codex_home/rules"
+  for rule_file in "$repo_dir"/rules/*.rules; do
+    [ -f "$rule_file" ] || continue
+    rule_name="$(basename "$rule_file")"
+    link_path "$rule_file" "$codex_home/rules/$rule_name"
+  done
+else
+  printf 'Skipped rules\n'
 fi

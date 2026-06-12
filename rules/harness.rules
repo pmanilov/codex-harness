@@ -1,0 +1,15 @@
+# Block broad staging so commits stay scoped to task-related files.
+prefix_rule(
+    pattern = ["git", "add", [".", "-A", "--all"]],
+    decision = "forbidden",
+    justification = "Stage explicit task files with `git add -- <paths>` instead of broad staging.",
+    match = [
+        "git add .",
+        "git add -A",
+        "git add --all",
+    ],
+    not_match = [
+        "git add -- scripts/check.sh",
+        "git add -- skills/repo-bootstrap/SKILL.md",
+    ],
+)

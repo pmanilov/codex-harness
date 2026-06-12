@@ -10,13 +10,17 @@ required_paths=(
   "README.md"
   "global/AGENTS.md"
   "config/config.example.toml"
+  "rules/harness.rules"
   "docs/ARCHITECTURE.md"
+  "docs/EVALS.md"
+  "docs/PLANS.md"
   "docs/TESTING.md"
   "docs/QUALITY.md"
   "docs/INSTALL.md"
   "scripts/install.sh"
   "scripts/check.sh"
   "skills/plan-deeply/SKILL.md"
+  "skills/repo-bootstrap/SKILL.md"
   "skills/ralph-loop/SKILL.md"
 )
 
@@ -108,7 +112,9 @@ fi
 
 bash scripts/install.sh --dry-run >/dev/null
 bash scripts/install.sh --skills-only --dry-run >/dev/null
+bash scripts/install.sh --skills-only --skill repo-bootstrap --dry-run >/dev/null
 bash scripts/install.sh --skills-only --skill ralph-loop --dry-run >/dev/null
 bash scripts/install.sh --no-agents --dry-run >/dev/null
+bash scripts/install.sh --no-skills --no-agents --no-config --dry-run >/dev/null
 
 printf 'Harness checks passed\n'

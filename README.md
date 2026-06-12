@@ -9,6 +9,7 @@ This repository is the source of truth. It is not a mirror of `~/.codex`.
 - `skills/`: personal Codex skills.
 - `global/AGENTS.md`: personal global guidance.
 - `config/config.example.toml`: portable config template without local trusted-project paths.
+- `rules/`: portable Codex command policy rules.
 - `scripts/install.sh`: symlink installer.
 - `scripts/check.sh`: repository validation.
 - `docs/`: maintenance notes for future agents.
@@ -53,3 +54,7 @@ bash scripts/check.sh
 git diff --check
 git status --short
 ```
+
+## MCP
+
+The portable config template includes OpenAI Docs MCP and Context7. GitHub MCP is intentionally omitted; use `gh` or add GitHub MCP locally only when a workflow needs it.

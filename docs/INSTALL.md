@@ -18,7 +18,7 @@ bash scripts/check.sh
 bash scripts/install.sh
 ```
 
-The installer links skills into `$HOME/.agents/skills` and links global guidance into `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`.
+The installer links skills into both `${CODEX_HOME:-$HOME/.codex}/skills` and `$HOME/.agents/skills`, links global guidance into `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, and links portable rules into `${CODEX_HOME:-$HOME/.codex}/rules`.
 
 If `${CODEX_HOME:-$HOME/.codex}/config.toml` does not exist, the installer creates it from `config/config.example.toml`. If it already exists, the installer leaves it unchanged.
 
@@ -44,6 +44,12 @@ Install skills and config bootstrap, but keep a device-specific `AGENTS.md`:
 bash scripts/install.sh --no-agents
 ```
 
+Install only portable rules:
+
+```bash
+bash scripts/install.sh --no-skills --no-agents --no-config
+```
+
 Preview changes without touching the filesystem:
 
 ```bash
@@ -63,3 +69,12 @@ bash scripts/install.sh --skills-only
 When editing a skill, edit the repo copy in `skills/`. The symlinked install makes the change visible to Codex without copying files.
 
 Restart Codex if a changed skill or global instruction does not appear in a running session.
+
+## MCP
+
+The config template includes:
+
+- `openaiDeveloperDocs`: official OpenAI developer documentation.
+- `context7`: up-to-date third-party library documentation through `npx`.
+
+Existing local `config.toml` files are not overwritten. Add or update MCP entries locally with `codex mcp add` when bootstrapping a machine that already has a config.
