@@ -1,6 +1,6 @@
 ---
 name: ralph-loop
-description: Run bounded Ralph/CRDAL-style iterative agent loops for software tasks: define external validation, attempt a change, run checks, analyze feedback and progress, perform metacognitive review, and repeat until success or budget. Use when the user asks for Ralph loop, ralphing, iterative self-improvement, external-validation loops, validation-driven task loops, or guarded AFK-style task iteration.
+description: "Run bounded Ralph/CRDAL-style iterative agent loops for software tasks: define external validation, attempt a change, run checks, analyze feedback and progress, perform metacognitive review, and repeat until success or budget. Use when the user asks for Ralph loop, ralphing, iterative self-improvement, external-validation loops, validation-driven task loops, or guarded AFK-style task iteration."
 ---
 
 # Ralph Loop
