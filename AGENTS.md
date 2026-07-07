@@ -18,6 +18,13 @@
 - Keep machine-specific config in local `~/.codex/config.toml`; only portable examples belong in `config/`.
 - Keep this file short. Move durable details into `docs/`.
 
+## Commit Messages
+
+- After verification, include a concise English commit message in the final response.
+- Use Gitflow-style branch context when no stricter local convention exists: `<type>: <imperative summary>`.
+- Choose `<type>` from the current branch kind when possible, such as `feature`, `bugfix`, `hotfix`, `release`, or `chore`.
+- Example: `feature: add skill validation checks`.
+
 ## Verification
 
 - Run `bash scripts/check.sh` after changing skills, scripts, docs, or config templates.

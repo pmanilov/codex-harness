@@ -7,7 +7,7 @@
 - Do not use `git add .`.
 - Do not stage unrelated modified files, generated artifacts, secrets, local env files, logs, or dependency/build directories.
 - After verification, include a concise commit message in the final response.
-- Use Conventional Commits when reasonable.
+- Follow the nearest project `AGENTS.md` for commit-message format. Keep project-specific commit conventions in local project instructions, not in this global file.
 
 ## Planning and completion
 
@@ -40,6 +40,7 @@
   - `docs/SECURITY.md` for auth, permissions, secrets, or sensitive data flows.
 - Ensure project `AGENTS.md` includes:
   - a short knowledge map that tells agents which `docs/*.md` file to read for each kind of task;
+  - project-specific Git workflow and commit-message format, if the project has one;
   - documentation upkeep rules for when code changes must update docs;
   - a reminder to keep `AGENTS.md` short and move durable details into `docs/`.
 - Fill each file from repository facts, not guesses:
